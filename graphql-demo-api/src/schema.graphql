@@ -1,0 +1,96 @@
+type Query {
+  post(id: String!): Post
+  user(id: String!): User
+  product(id: String!): Product
+  feed(visitorId:String, search: String,  offset: Int = 0, limit: Int = 20, orderBy: PostOrderByInput = createdAt_ASC): Feed!
+}
+
+type Mutation {
+  addUser(name: String!, photo: String!): IdResponse!
+  addPost(postedBy: String!, photo: String!, text: String, tags: String, products: [String!]): IdResponse!
+  addProduct(name: String!, description: String!, photo: String!, price: Float!): IdResponse!
+  addBookmark(visitor: String!, post: String!): IdResponse!
+  deleteBookmark(id: String!): IdResponse!
+  addLike(visitor: String!, post: String!): IdResponse!
+  deleteLike(id: String!): IdResponse!
+  addFollow(visitor: String!, user: String!): IdResponse!
+  deleteFollow(id: String!): IdResponse!
+}
+
+interface Node {
+  id: ID!
+}
+
+type IdResponse implements Node {
+  id: ID!
+}
+
+type User implements Node {
+  id: ID!
+  name: String!
+  photo: String!
+}
+
+type Post implements Node {
+  id: ID!
+  createdAt: String!
+  photo: String!
+  text: String
+  tags: String
+  postedBy: User
+  products: [Product]
+  bookmarkId: String
+  likes: Int
+  likeId: String
+  followId: String
+}
+
+type Product implements Node {
+  id: ID!
+  name: String!
+  description: String!
+  photo: String!
+  price: Float!
+}
+
+type Feed {
+  docs: [Post]
+  totalDocs: Int 
+  limit: Int
+  hasPrevPage: Boolean
+  hasNextPage: Boolean
+  page: Int
+  totalPages: Int
+  prevPage: Int
+  nextPage: Int
+}
+
+type Visitor implements Node {
+  id: ID!
+  bookmarks: [Bookmark]
+}
+
+type Bookmark implements Node {
+  id: ID!
+  visitor: String!
+  post: String!
+}
+
+type Like implements Node {
+  id: ID!
+  visitor: String!
+  post: String!
+}
+
+type Follow implements Node {
+  id: ID!
+  visitor: String!
+  user: String!
+}
+
+enum PostOrderByInput {
+  createdAt_ASC
+  createdAt_DESC
+  postedBy_ASC
+  postedBy_DESC
+}
